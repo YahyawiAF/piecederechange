@@ -23,3 +23,4 @@ Leave `EXPO_PUBLIC_ORG_ID` empty to use the local demo catalog (`src/data/seed.t
 
 17 products, 5 shops, vehicle types (scooter / moto / mobylette / car), categories + sub-categories, sample orders `RES-2026-081` and `RES-2026-094`.
 # piecederechange
+# piecederechange
