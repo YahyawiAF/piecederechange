@@ -71,20 +71,20 @@ export function MegaMenu({ counts }: { counts: Record<string, number> }) {
           </div>
           <div className="grid grid-cols-3 gap-3 2xl:grid-cols-4">
             {CATEGORIES.map((c) => (
-              <div key={c.id} className="group lift flex gap-3 rounded-2xl border border-line p-2.5">
-                <Link href={`/catalogue?cat=${c.id}`} onClick={close} className="bp flex size-[84px] shrink-0 items-center justify-center overflow-hidden rounded-xl" aria-label={c.name}>
+              <div key={c.id} className="group lift relative flex cursor-pointer gap-3 rounded-2xl border border-line p-2.5 hover:border-pri">
+                <span className="bp flex size-[84px] shrink-0 items-center justify-center overflow-hidden rounded-xl">
                   {/* eslint-disable-next-line @next/next/no-img-element -- optional ERP photo, any host */}
                   {c.image ? <img src={c.image} alt="" className="size-full object-cover" /> : <PartIcon icon={c.icon} size={58} strokeWidth={1.5} />}
-                </Link>
+                </span>
                 <div className="flex min-w-0 flex-1 flex-col">
-                  <Link href={`/catalogue?cat=${c.id}`} onClick={close} className="flex items-baseline justify-between gap-2">
+                  <Link href={`/catalogue?cat=${c.id}`} onClick={close} className="flex items-baseline justify-between gap-2 after:absolute after:inset-0 after:rounded-2xl after:content-['']">
                     <span className="truncate text-[15px] font-bold transition-colors group-hover:text-pri-ink">{c.name}</span>
                     <span className="shrink-0 text-[11.5px] text-mut">{plural(counts[c.id] ?? 0, "pièce", "pièces")}</span>
                   </Link>
                   <span className="truncate text-[12px] text-mut">{c.blurb}</span>
                   <span className="mt-1.5 flex flex-wrap gap-x-2.5 gap-y-0.5">
                     {c.subs.map((s) => (
-                      <Link key={s.label} href={`/catalogue?cat=${c.id}&q=${encodeURIComponent(s.q)}`} onClick={close} className="text-[12.5px] font-medium text-ink2 transition-colors hover:text-pri-ink">
+                      <Link key={s.label} href={`/catalogue?cat=${c.id}&q=${encodeURIComponent(s.q)}`} onClick={close} className="relative z-10 text-[12.5px] font-medium text-ink2 transition-colors hover:text-pri-ink hover:underline">
                         {s.label}
                       </Link>
                     ))}
