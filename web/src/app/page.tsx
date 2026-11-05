@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { BRANDS, TYPES } from "@/lib/moto";
 import { CATEGORIES, PART_ICONS, dt, plural } from "@/lib/catalog";
-import { getAllParts, getDeals, getShops } from "@/lib/data";
+import { getAllParts, getDeals, getShops, getSpotlights } from "@/lib/data";
+import { AdSpotlight } from "@/components/ads";
 import { WRAP } from "@/lib/ui";
 import { MotoIcon, PartIcon, ChevronRight, ScanIcon, StarIcon } from "@/components/icons";
 import { PromoCarousel } from "@/components/home/promo-carousel";
@@ -23,7 +24,7 @@ function SectionTitle({ title, href, link = "Tout voir" }: { title: string; href
 }
 
 export default async function HomePage() {
-  const [parts, deals, shops] = await Promise.all([getAllParts(), getDeals(), getShops()]);
+  const [parts, deals, shops, spotlights] = await Promise.all([getAllParts(), getDeals(), getShops(), getSpotlights()]);
   const compact: CompactPart[] = parts.filter((p) => !p.universal).map((p) => ({ id: p.id, name: p.name, maker: p.maker, ref: p.ref, cond: p.cond, price: p.price, oldPrice: p.oldPrice ?? null, tag: p.tag ?? null, icon: p.icon, shop: `${p.shop.name} · ${p.shop.km}`, fits: p.fits, fitBrands: p.fitBrands, fitTypes: p.fitTypes }));
   const gear = ["casques", "equipement", "accessoires"].flatMap((c) => parts.filter((p) => p.category === c).slice(0, 4));
 
@@ -51,6 +52,10 @@ export default async function HomePage() {
         <PromoCarousel />
         <MotoFinder partFits={parts.map((p) => ({ fits: p.fits, fitBrands: p.fitBrands, fitTypes: p.fitTypes, universal: p.universal }))} />
       </section>
+
+      <div className={WRAP}>
+        <AdSpotlight ads={spotlights} />
+      </div>
 
 
       {deals.length > 0 && (

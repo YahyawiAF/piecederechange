@@ -102,6 +102,9 @@ function toPart(p: StorefrontProduct, shop: Shop): Part {
     fitBrands: tagValues(p.tags, "marque").map((s) => s.toLowerCase()),
     fitTypes: tagValues(p.tags, "type").flatMap((v) => typeFromTag(v) ?? []),
     universal: p.tags.some((t) => t.toLowerCase() === "universel") || ["casques", "equipement"].includes(category),
+    ad: p.tags.some((t) => t.toLowerCase() === "pub")
+      ? { kind: p.tags.some((t) => t.toLowerCase() === "nouveau") ? "new" : "sponsored", headline: p.name, sub: p.description?.split(". ")[0] ?? undefined }
+      : null,
     tag: p.tags.some((t) => t.toLowerCase() === "nouveau") ? "new" : p.tags.some((t) => t.toLowerCase() === "top") ? "best" : null,
     description: p.description,
     specs: [],

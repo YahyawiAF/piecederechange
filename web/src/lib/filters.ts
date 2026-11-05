@@ -30,7 +30,8 @@ export function parseFilters(sp: RawParams): CatalogFilters {
     pos: pos === "Avant" || pos === "Arrière" ? pos : undefined,
     makers: list(sp.maker),
     conds: list(sp.cond).filter((c): c is Condition => CONDS.includes(c as Condition)),
-    sort: sort === "price" || sort === "distance" ? sort : "relevance",
+    sort: sort === "price" || sort === "price_desc" || sort === "distance" ? sort : "relevance",
+    promo: one(sp.promo) === "1",
   };
 }
 
@@ -56,6 +57,7 @@ export function matchBase(parts: Part[], f: CatalogFilters) {
       (!scope || scope.some((m) => fitsModel(p, m))) &&
       (!f.cat || p.category === f.cat) &&
       (!f.pos || p.position === f.pos) &&
+      (!f.promo || !!(p.oldPrice && p.oldPrice > p.price)) &&
       (!q || norm(`${p.name} ${p.maker} ${p.ref} ${p.oem ?? ""}`).includes(q) || p.fits.some((id) => norm(modelById(id)?.name ?? "").includes(q))),
   );
 }
@@ -63,6 +65,7 @@ export function matchBase(parts: Part[], f: CatalogFilters) {
 export function applyFilters(parts: Part[], f: CatalogFilters) {
   let res = matchBase(parts, f).filter((p) => (!f.makers.length || f.makers.includes(p.maker)) && (!f.conds.length || f.conds.includes(p.cond)));
   if (f.sort === "price") res = [...res].sort((a, b) => a.price - b.price);
+  if (f.sort === "price_desc") res = [...res].sort((a, b) => b.price - a.price);
   if (f.sort === "distance") res = [...res].sort((a, b) => parseFloat(a.shop.km.replace(",", ".")) - parseFloat(b.shop.km.replace(",", ".")));
   return res;
 }
@@ -105,6 +108,7 @@ export function toQuery(f: Partial<CatalogFilters>) {
   if (f.pos) q.set("pos", f.pos);
   if (f.makers?.length) q.set("maker", f.makers.join(","));
   if (f.conds?.length) q.set("cond", f.conds.join(","));
+  if (f.promo) q.set("promo", "1");
   if (f.sort && f.sort !== "relevance") q.set("sort", f.sort);
   const s = q.toString();
   return s ? `?${s}` : "";

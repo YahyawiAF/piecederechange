@@ -7,7 +7,8 @@ import { searchParts } from "@/lib/data";
 import { WRAP } from "@/lib/ui";
 import { CheckIcon } from "@/components/icons";
 import { PartCard, PartRow } from "@/components/parts";
-import { ActivePills, CategoryBar, FilterProvider, FilterSidebar, MobileFilterBar, ResultsArea, SortSelect } from "@/components/catalogue/filters";
+import { SponsoredCard } from "@/components/ads";
+import { ActivePills, CategoryBar, FilterProvider, FilterSidebar, MobileFilterBar, PromoToggle, ResultsArea, SortControl } from "@/components/catalogue/filters";
 
 export const metadata: Metadata = { title: "Catalogue" };
 
@@ -23,13 +24,16 @@ export default function CataloguePage({ searchParams }: PageProps<"/catalogue">)
 
 async function Catalogue({ searchParams }: { searchParams: PageProps<"/catalogue">["searchParams"] }) {
   const f = parseFilters(await searchParams);
-  const { results, makerCounts, condCounts, catCounts } = await searchParts(f);
+  const { results, makerCounts, condCounts, catCounts, promoCount } = await searchParts(f);
   const cat = categoryById(f.cat);
   const bikeScoped = !!(f.type || f.brands.length || f.models.length || f.cc);
   const shops = new Set(results.map((p) => p.shop.id)).size;
+  // Ad spot: the first advertised part that matches the current filters, shown once, at the top.
+  const sponsored = results.find((p) => p.ad);
+  const list = sponsored ? results.filter((p) => p.id !== sponsored.id) : results;
 
   return (
-    <FilterProvider filters={f} makerCounts={makerCounts} condCounts={condCounts} catCounts={catCounts} total={results.length}>
+    <FilterProvider filters={f} makerCounts={makerCounts} condCounts={condCounts} catCounts={catCounts} promoCount={promoCount} total={results.length}>
       <nav aria-label="Fil d'Ariane" className="hidden flex-wrap gap-1.5 text-[13px] text-mut md:flex">
         <Link href="/">Accueil</Link>
         <span>/</span>
@@ -59,19 +63,24 @@ async function Catalogue({ searchParams }: { searchParams: PageProps<"/catalogue
             ) : (
               <span className="text-[13.5px] text-mut">Choisissez votre moto pour ne voir que les pièces compatibles.</span>
             )}
-            <SortSelect />
+            <div className="hidden items-center gap-3 md:flex">
+              <PromoToggle />
+              <SortControl />
+            </div>
           </div>
 
           <ResultsArea>
             {results.length > 0 ? (
               <>
                 <div className="flex flex-col gap-2 md:hidden">
-                  {results.map((p, i) => (
+                  {sponsored && <SponsoredCard part={sponsored} fitsLabel={fitsLabel(sponsored, f)} />}
+                  {list.map((p, i) => (
                     <PartRow key={p.id} part={p} fitsLabel={fitsLabel(p, f)} delay={Math.min(i, 8) * 40} />
                   ))}
                 </div>
                 <div className="hidden gap-3.5 md:grid md:grid-cols-[repeat(auto-fill,minmax(230px,1fr))]">
-                  {results.map((p, i) => (
+                  {sponsored && <SponsoredCard part={sponsored} fitsLabel={fitsLabel(sponsored, f)} />}
+                  {list.map((p, i) => (
                     <PartCard key={p.id} part={p} fitsLabel={fitsLabel(p, f)} delay={Math.min(i, 8) * 35} />
                   ))}
                 </div>

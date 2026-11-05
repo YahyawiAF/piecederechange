@@ -31,7 +31,8 @@ export async function searchParts(f: CatalogFilters) {
     acc[p.category] = (acc[p.category] ?? 0) + 1;
     return acc;
   }, {});
-  return { results: applyFilters(all, f), makerCounts: count("maker"), condCounts: count("cond"), catCounts };
+  const promoCount = matchBase(all, { ...f, promo: false }).filter((p) => p.oldPrice && p.oldPrice > p.price).length;
+  return { results: applyFilters(all, f), makerCounts: count("maker"), condCounts: count("cond"), catCounts, promoCount };
 }
 
 export async function getPart(id: string) {
@@ -50,6 +51,11 @@ export async function getShops() {
 
 export async function getOrders() {
   return provider().listOrders();
+}
+
+/** Parts with an ad (new or sponsored), for the ad spots. */
+export async function getSpotlights() {
+  return (await getAllParts()).filter((p) => p.ad);
 }
 
 export async function getDeals() {

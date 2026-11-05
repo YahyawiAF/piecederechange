@@ -57,7 +57,7 @@ export const PARTS: Part[] = [
     tag: "best", specs: [{ label: "Position", value: "Avant (gauche ou droite)" }, { label: "Composé", value: "Fritté HH, route & piste" }, { label: "Quantité", value: "1 jeu = 1 étrier" }, { label: "Garantie", value: "1 an" }],
   }),
   P("Plaquettes avant Kawasaki origine", "Kawasaki", "43082-0122", "original", 210, "freinage", "pads", "mp", ["z1000", "z900"], { position: "Avant", stock: 1 }),
-  P("Plaquettes Brembo 07KA23SA Sinter", "Brembo", "07KA23SA", "aftermarket", 189, "freinage", "pads", "sm", ["z1000", "z900", "z650", "ninja650"], { position: "Avant" }),
+  P("Plaquettes Brembo 07KA23SA Sinter", "Brembo", "07KA23SA", "aftermarket", 189, "freinage", "pads", "sm", ["z1000", "z900", "z650", "ninja650"], { position: "Avant", ad: { kind: "sponsored", headline: "Le mordant Brembo, sans changer d'étrier", sub: "Plaquettes frittées route et piste pour Kawasaki." } }),
   P("Plaquettes arrière Galfer FD329", "Galfer", "FD329G1375", "aftermarket", 98, "freinage", "pads", "mp", NAKED_KAWA, { position: "Arrière" }),
   P("Disque avant Brembo Serie Oro 310 mm", "Brembo", "78B40870", "aftermarket", 520, "freinage", "disc", "em", ["z1000", "z900"], { position: "Avant" }),
   P("Disque avant Galfer Wave 300 mm", "Galfer", "DF418CW", "aftermarket", 410, "freinage", "disc", "sm", ["mt07", "mt09", "tenere", "r3"], { position: "Avant", oldPrice: 489, stock: 4 }),
@@ -73,12 +73,12 @@ export const PARTS: Part[] = [
   P("Plaquettes Suzuki d’occasion, 60 %", "Suzuki", "59100-08830", "used", 70, "freinage", "pads", "cb", ["gsxs", "gsxr", "vstrom"], { position: "Avant" }),
   P("Leviers frein & embrayage CNC réglables", "Puig", "PUIG-LV-Z", "aftermarket", 95, "freinage", "lever", "mp", ["z1000", "z900", "z650", "ninja650", "mt07", "mt09"], { oldPrice: 129, stock: 3 }),
   // Kit chaîne
-  P("Kit chaîne DID 525 ZVM-X 15/42", "DID", "DID-525ZVMX-1542", "aftermarket", 420, "chaine", "chain", "mp", ["z1000"], { stock: 2, tag: "best" }),
+  P("Kit chaîne DID 525 ZVM-X 15/42", "DID", "DID-525ZVMX-1542", "aftermarket", 420, "chaine", "chain", "mp", ["z1000"], { stock: 2, tag: "best", ad: { kind: "sponsored", headline: "Le kit chaîne n°1 sur Z1000", sub: "Chaîne X-ring ZVM-X, pignon et couronne acier. Pose en atelier possible." } }),
   P("Kit chaîne DID 520 VX3 renforcé", "DID", "DID-520VX3", "aftermarket", 289, "chaine", "chain", "sm", ["mt07", "z650", "ninja650", "duke390", "rc390", "cb650r"], { oldPrice: 359, stock: 5 }),
   P("Kit chaîne Regina 525 ZRP", "Regina", "REG-525ZRP", "aftermarket", 395, "chaine", "chain", "sm", ["gs", "africa", "tenere", "vstrom", "adv890"]),
   // Transmission scooter / moteur
   P("Courroie de transmission Piaggio", "Piaggio", "1A000415", "original", 135, "moteur", "belt", "em", ["gts", "mp3"]),
-  P("Galets de variateur Malossi HT", "Malossi", "MAL-669357", "aftermarket", 89, "moteur", "rollers", "mp", ["gts", "tmax", "xmax", "liberty"], { tag: "new" }),
+  P("Galets de variateur Malossi HT", "Malossi", "MAL-669357", "aftermarket", 89, "moteur", "rollers", "mp", ["gts", "tmax", "xmax", "liberty"], { tag: "new", ad: { kind: "new", headline: "Plus de reprise pour votre scooter", sub: "Galets HT Malossi, accélérations plus franches dès les bas régimes." } }),
   P("Kit cylindre 50 cm³ fonte", "Airsal", "P103-CYL50", "aftermarket", 165, "moteur", "piston", "cb", ["103", "kisbee", "zip"]),
   P("Courroie de variateur 50 cm³", "Dayco", "KB50-BELT", "used", 25, "moteur", "belt", "cb", [], { fitTypes: ["50 cm³"] }),
   // Filtration
@@ -98,7 +98,7 @@ export const PARTS: Part[] = [
   P("Bulle fumée haute protection", "MRA", "MRA-4025", "aftermarket", 260, "carenage", "fairing", "mp", ["ninja650", "zx6r", "r6", "cbr600"]),
   // Casques (universal)
   P("Casque intégral Shark Ridill 2", "Shark", "HE1102", "aftermarket", 690, "casques", "helmet", "mp", [], { universal: true, oldPrice: 790, stock: 6, specs: [{ label: "Type", value: "Intégral" }, { label: "Tailles", value: "XS → XXL" }, { label: "Homologation", value: "ECE 22.06" }, { label: "Poids", value: "1 450 g" }] }),
-  P("Casque modulable LS2 Valiant II", "LS2", "FF900", "aftermarket", 1150, "casques", "helmet", "sm", [], { universal: true, tag: "new", stock: 3, specs: [{ label: "Type", value: "Modulable 180°" }, { label: "Tailles", value: "S → XXL" }, { label: "Homologation", value: "ECE 22.06" }] }),
+  P("Casque modulable LS2 Valiant II", "LS2", "FF900", "aftermarket", 1150, "casques", "helmet", "sm", [], { universal: true, tag: "new", stock: 3, ad: { kind: "new", headline: "Le modulable qui s'ouvre à 180°", sub: "Double homologation intégral / jet, écran solaire intégré." }, specs: [{ label: "Type", value: "Modulable 180°" }, { label: "Tailles", value: "S → XXL" }, { label: "Homologation", value: "ECE 22.06" }] }),
   P("Casque jet Vespa Visor 4.0", "Vespa", "606839M", "original", 420, "casques", "helmet", "em", [], { universal: true, tag: "best", stock: 8, specs: [{ label: "Type", value: "Jet avec visière" }, { label: "Tailles", value: "XS → XL" }] }),
   P("Casque cross Airoh Twist 3", "Airoh", "TW3-22", "aftermarket", 540, "casques", "helmet", "sm", [], { universal: true, stock: 4 }),
   // Équipement pilote (universal)
@@ -110,8 +110,8 @@ export const PARTS: Part[] = [
   P("Antivol U Abus Granit X-Plus 540", "Abus", "540-160HB", "aftermarket", 359, "accessoires", "lock", "mp", [], { universal: true, tag: "best", specs: [{ label: "Niveau", value: "15 / 15 (SRA)" }, { label: "Longueur", value: "230 mm" }] }),
   P("Bloque-disque alarme Xena XX6", "Xena", "XX6-YB", "aftermarket", 210, "accessoires", "lock", "cb", [], { universal: true, oldPrice: 249 }),
   P("Top case Givi E43 Monolock 43 L", "Givi", "E43NML", "aftermarket", 389, "accessoires", "topcase", "em", [], { universal: true, specs: [{ label: "Volume", value: "43 L, 1 casque intégral" }, { label: "Fixation", value: "Monolock, platine incluse" }] }),
-  P("Support smartphone Quad Lock moto", "Quad Lock", "QLM-HBR", "aftermarket", 249, "accessoires", "phone", "mp", [], { universal: true, tag: "new" }),
-  P("Intercom Cardo Spirit HD", "Cardo", "SPRT0101", "aftermarket", 499, "accessoires", "phone", "sm", [], { universal: true, oldPrice: 569, stock: 3 }),
+  P("Support smartphone Quad Lock moto", "Quad Lock", "QLM-HBR", "aftermarket", 249, "accessoires", "phone", "mp", [], { universal: true, tag: "new", ad: { kind: "new", headline: "Votre GPS, verrouillé en un quart de tour", sub: "Fixation guidon anti-vibrations, compatible tous smartphones." } }),
+  P("Intercom Cardo Spirit HD", "Cardo", "SPRT0101", "aftermarket", 499, "accessoires", "phone", "sm", [], { universal: true, oldPrice: 569, stock: 3, ad: { kind: "sponsored", headline: "Roulez connecté, en duo", sub: "Intercom Bluetooth, son HD, commande vocale." } }),
   P("Housse moto étanche, taille L", "Bagster", "HOUSSE-L", "aftermarket", 79, "accessoires", "topcase", "cb", [], { universal: true }),
   P("Platine top case Givi pour Vespa GTS", "Givi", "SR5612", "aftermarket", 165, "accessoires", "topcase", "em", ["gts"]),
 ];

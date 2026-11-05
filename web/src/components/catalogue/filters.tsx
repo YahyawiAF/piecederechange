@@ -6,7 +6,7 @@ import { ALL_TYPE, BRANDS, CC_RANGES, TYPES, brandsForType, modelById, tileStyle
 import { CATEGORIES, CONDITIONS, plural } from "@/lib/catalog";
 import { scopeTitle, toQuery } from "@/lib/filters";
 import type { CatalogFilters, Condition } from "@/lib/types";
-import { ChevronRight, CloseIcon, FilterIcon, GridIcon, MotoIcon, PartIcon, SortIcon } from "../icons";
+import { CheckIcon, ChevronRight, CloseIcon, FilterIcon, GridIcon, MotoIcon, PartIcon, SortIcon, TagIcon } from "../icons";
 
 type Ctx = {
   f: CatalogFilters;
@@ -15,6 +15,7 @@ type Ctx = {
   makerCounts: Record<string, number>;
   condCounts: Record<string, number>;
   catCounts: Record<string, number>;
+  promoCount: number;
   total: number;
 };
 
@@ -22,7 +23,7 @@ const FilterCtx = createContext<Ctx | null>(null);
 const useFilters = () => useContext(FilterCtx)!;
 
 /** Holds the filters locally so clicks feel instant, and pushes them to the URL (the server re-renders results). */
-export function FilterProvider({ filters, makerCounts, condCounts, catCounts, total, children }: { filters: CatalogFilters; makerCounts: Record<string, number>; condCounts: Record<string, number>; catCounts: Record<string, number>; total: number; children: React.ReactNode }) {
+export function FilterProvider({ filters, makerCounts, condCounts, catCounts, promoCount, total, children }: { filters: CatalogFilters; makerCounts: Record<string, number>; condCounts: Record<string, number>; catCounts: Record<string, number>; promoCount: number; total: number; children: React.ReactNode }) {
   const router = useRouter();
   const [f, setF] = useState(filters);
   const [pending, start] = useTransition();
@@ -38,7 +39,7 @@ export function FilterProvider({ filters, makerCounts, condCounts, catCounts, to
     setF(next);
     start(() => router.replace(`/catalogue${toQuery(next)}`, { scroll: false }));
   };
-  return <FilterCtx.Provider value={{ f, update, pending, makerCounts, condCounts, catCounts, total }}>{children}</FilterCtx.Provider>;
+  return <FilterCtx.Provider value={{ f, update, pending, makerCounts, condCounts, catCounts, promoCount, total }}>{children}</FilterCtx.Provider>;
 }
 
 /** Fades results while new ones load. */
@@ -247,7 +248,7 @@ export function MobileFilterBar() {
   const { f, update, total } = useFilters();
   const pickType = usePickType();
   const [open, setOpen] = useState(false);
-  const active = (f.type ? 1 : 0) + f.brands.length + f.models.length + (f.cc ? 1 : 0) + (f.pos ? 1 : 0) + f.makers.length + f.conds.length;
+  const active = (f.promo ? 1 : 0) + (f.type ? 1 : 0) + f.brands.length + f.models.length + (f.cc ? 1 : 0) + (f.pos ? 1 : 0) + f.makers.length + f.conds.length;
   const model = f.models.length === 1 ? modelById(f.models[0]) : null;
   const tone = (model ? typeById(model.type) : f.type ? typeById(f.type) : null) ?? ALL_TYPE;
 
@@ -300,10 +301,14 @@ export function MobileFilterBar() {
           Filtres
           {active > 0 && <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-pri px-1.5 text-[11.5px] text-white">{active}</span>}
         </button>
+        <MobileSort />
+        <PromoToggle />
+      </div>
+      <div className="mt-2 grid grid-cols-4 gap-1.5">
         {([[undefined, "Tous états"], ["original", "Origine"], ["aftermarket", "Adaptable"], ["used", "Occasion"]] as const).map(([c, label]) => {
           const on = c ? f.conds.length === 1 && f.conds[0] === c : f.conds.length === 0;
           return (
-            <button key={label} onClick={() => update({ conds: c ? [c] : [] })} aria-pressed={on} className={`${chip(on)} h-10 shrink-0 px-3.5 whitespace-nowrap`}>
+            <button key={label} onClick={() => update({ conds: c ? [c] : [] })} aria-pressed={on} className={`${chip(on)} h-9 min-w-0 truncate px-1 text-[12.5px] whitespace-nowrap`}>
               {label}
             </button>
           );
@@ -316,7 +321,7 @@ export function MobileFilterBar() {
           <span className="absolute top-[7px] left-1/2 h-[5px] w-10 -translate-x-1/2 rounded-full bg-line2" />
           <h2 className="disp text-[26px]">Filtres</h2>
           <div className="flex items-center">
-            <button onClick={() => update({ type: undefined, brands: [], models: [], cc: undefined, pos: undefined, makers: [], conds: [] })} className="h-11 px-2.5 text-sm font-semibold text-pri-ink">
+            <button onClick={() => update({ promo: false, type: undefined, brands: [], models: [], cc: undefined, pos: undefined, makers: [], conds: [] })} className="h-11 px-2.5 text-sm font-semibold text-pri-ink">
               Tout effacer
             </button>
             <button onClick={() => setOpen(false)} aria-label="Fermer" className="flex size-11 items-center justify-center">
@@ -358,6 +363,7 @@ export function ActivePills() {
   if (f.pos) pills.push({ key: "pos", label: f.pos, remove: () => update({ pos: undefined }) });
   f.makers.forEach((k) => pills.push({ key: `k-${k}`, label: k, remove: () => update({ makers: f.makers.filter((x) => x !== k) }) }));
   f.conds.forEach((c) => pills.push({ key: `c-${c}`, label: CONDITIONS[c].label, remove: () => update({ conds: f.conds.filter((x) => x !== c) }) }));
+  if (f.promo) pills.push({ key: "promo", label: "En promotion", tone: { fg: "#E11D48", soft: "#FDE9EE", ink: "#9F1239" }, remove: () => update({ promo: false }) });
   if (f.q) pills.push({ key: "q", label: `« ${f.q} »`, remove: () => update({ q: undefined }) });
   if (!pills.length) return null;
   return (
@@ -368,26 +374,79 @@ export function ActivePills() {
           <CloseIcon size={14} strokeWidth={2.6} />
         </button>
       ))}
-      <button onClick={() => update({ q: undefined, type: undefined, brands: [], models: [], cc: undefined, pos: undefined, makers: [], conds: [] })} className="h-9 px-2 text-[13px] font-semibold text-pri-ink">
+      <button onClick={() => update({ q: undefined, promo: false, type: undefined, brands: [], models: [], cc: undefined, pos: undefined, makers: [], conds: [] })} className="h-9 px-2 text-[13px] font-semibold text-pri-ink">
         Tout effacer
       </button>
     </div>
   );
 }
 
-export function SortSelect() {
-  const { f, update } = useFilters();
+const SORTS: { id: NonNullable<CatalogFilters["sort"]>; label: string; short: string }[] = [
+  { id: "relevance", label: "Pertinence", short: "Pertinence" },
+  { id: "price", label: "Prix croissant", short: "Prix ↑" },
+  { id: "price_desc", label: "Prix décroissant", short: "Prix ↓" },
+  { id: "distance", label: "Magasins les plus proches", short: "Distance" },
+];
+
+/** Red "Promos" toggle with the number of discounted parts. */
+export function PromoToggle({ className = "" }: { className?: string }) {
+  const { f, update, promoCount } = useFilters();
+  const on = !!f.promo;
   return (
-    <label className="flex items-center gap-2 text-sm text-mut">
-      <SortIcon size={16} className="md:hidden" />
-      <span className="hidden md:inline">Trier par</span>
-      <span className="sr-only md:hidden">Trier par</span>
-      <select value={f.sort ?? "relevance"} onChange={(e) => update({ sort: e.target.value as CatalogFilters["sort"] })} className="h-10 rounded-[10px] border-[1.5px] border-line bg-card px-2.5 text-sm font-semibold text-ink outline-none focus:border-pri">
-        <option value="relevance">Pertinence</option>
-        <option value="price">Prix croissant</option>
-        <option value="distance">Distance</option>
-      </select>
-    </label>
+    <button onClick={() => update({ promo: !on })} aria-pressed={on} disabled={!on && promoCount === 0} className={`tap flex h-10 shrink-0 items-center gap-1.5 rounded-full border-[1.5px] px-3 text-[13px] font-bold disabled:opacity-40 ${on ? "border-sale bg-sale text-white shadow-[0_8px_18px_-10px_rgb(225_29_72/0.8)]" : "border-[#F5B8C6] bg-[#FDE9EE] text-[#9F1239] hover:border-sale"} ${className}`}>
+      <TagIcon size={16} />
+      Promos
+      <span className={`rounded-full px-1.5 text-[11.5px] ${on ? "bg-white/25" : "bg-white text-sale"}`}>{promoCount}</span>
+    </button>
+  );
+}
+
+/** Desktop: segmented sort control. */
+export function SortControl() {
+  const { f, update } = useFilters();
+  const cur = f.sort ?? "relevance";
+  return (
+    <div className="hidden items-center gap-2.5 md:flex">
+      <span className="text-sm text-mut">Trier par</span>
+      <div role="radiogroup" aria-label="Trier par" className="flex rounded-xl border border-line bg-sunk p-1">
+        {SORTS.map((o) => (
+          <button key={o.id} role="radio" aria-checked={cur === o.id} onClick={() => update({ sort: o.id })} title={o.label} className={`h-8 rounded-[9px] px-3 text-[13px] font-semibold whitespace-nowrap transition-[background-color,color,box-shadow] duration-200 ${cur === o.id ? "bg-card text-ink shadow-[0_1px_3px_rgb(27_28_32/0.16)]" : "text-mut hover:text-ink"}`}>
+            {o.short}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/** Phone: "Trier" button and a small sheet with the options. */
+export function MobileSort() {
+  const { f, update } = useFilters();
+  const [open, setOpen] = useState(false);
+  const cur = SORTS.find((o) => o.id === (f.sort ?? "relevance"))!;
+  return (
+    <>
+      <button onClick={() => setOpen(true)} aria-haspopup="dialog" className="tap flex h-10 shrink-0 items-center gap-1.5 rounded-full border-[1.5px] border-line bg-card px-3 text-[13px] font-bold">
+        <SortIcon size={16} />
+        {cur.id === "relevance" ? "Trier" : cur.short}
+      </button>
+      <div onClick={() => setOpen(false)} className={`fixed inset-0 z-40 bg-ink/40 transition-opacity duration-300 ${open ? "opacity-100" : "pointer-events-none opacity-0"}`} />
+      <section role="dialog" aria-modal="true" aria-label="Trier par" inert={!open} className={`fixed inset-x-0 bottom-0 z-50 rounded-t-3xl bg-card px-4 pt-3 pb-8 shadow-[0_-8px_30px_rgb(27_28_32/0.18)] transition-transform duration-300 ease-[cubic-bezier(.2,.8,.2,1)] ${open ? "translate-y-0" : "translate-y-[105%]"}`}>
+        <span className="mx-auto mb-3 block h-[5px] w-10 rounded-full bg-line2" />
+        <h2 className="disp mb-2 text-[24px]">Trier par</h2>
+        <div role="radiogroup" className="flex flex-col">
+          {SORTS.map((o) => {
+            const on = o.id === cur.id;
+            return (
+              <button key={o.id} role="radio" aria-checked={on} onClick={() => { update({ sort: o.id }); setOpen(false); }} className="flex h-14 items-center justify-between border-b border-line text-left text-[15px] font-semibold last:border-0">
+                {o.label}
+                <span className={`flex size-6 items-center justify-center rounded-full border-2 transition-colors ${on ? "border-pri bg-pri text-white" : "border-line2"}`}>{on && <CheckIcon size={14} strokeWidth={3.2} />}</span>
+              </button>
+            );
+          })}
+        </div>
+      </section>
+    </>
   );
 }
 

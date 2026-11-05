@@ -50,6 +50,8 @@ export type Part = {
   universal?: boolean;
   /** Merchandising tag shown on the card's top-right corner (a discount always wins). */
   tag?: "new" | "best" | null;
+  /** Advertised part: shown in the ad spots (Accueil spotlight, top of the catalogue). */
+  ad?: { kind: "new" | "sponsored"; headline: string; sub?: string } | null;
   description: string | null;
   specs: { label: string; value: string }[];
   shop: Shop;
@@ -86,7 +88,9 @@ export type CatalogFilters = {
   pos?: "Avant" | "Arrière";
   makers: string[];
   conds: Condition[];
-  sort?: "relevance" | "price" | "distance";
+  sort?: "relevance" | "price" | "price_desc" | "distance";
+  /** Only discounted parts. */
+  promo?: boolean;
 };
 
 export type ReservationInput = {
