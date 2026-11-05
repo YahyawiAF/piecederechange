@@ -6,6 +6,7 @@ import { ALL_TYPE, BRANDS, CC_RANGES, TYPES, brandsForType, modelById, tileStyle
 import { CATEGORIES, CONDITIONS, plural } from "@/lib/catalog";
 import { scopeTitle, toQuery } from "@/lib/filters";
 import type { CatalogFilters, Condition } from "@/lib/types";
+import { MoreButton } from "../mobile-more";
 import { CheckIcon, ChevronRight, CloseIcon, FilterIcon, GridIcon, MotoIcon, PartIcon, SortIcon, TagIcon } from "../icons";
 
 type Ctx = {
@@ -305,10 +306,10 @@ export function MobileFilterBar() {
         <PromoToggle />
       </div>
       <div className="mt-2 grid grid-cols-4 gap-1.5">
-        {([[undefined, "Tous états"], ["original", "Origine"], ["aftermarket", "Adaptable"], ["used", "Occasion"]] as const).map(([c, label]) => {
+        {([[undefined, "Tous"], ["original", "Origine"], ["aftermarket", "Adaptable"], ["used", "Occasion"]] as const).map(([c, label]) => {
           const on = c ? f.conds.length === 1 && f.conds[0] === c : f.conds.length === 0;
           return (
-            <button key={label} onClick={() => update({ conds: c ? [c] : [] })} aria-pressed={on} className={`${chip(on)} h-9 min-w-0 truncate px-1 text-[12.5px] whitespace-nowrap`}>
+            <button key={label} onClick={() => update({ conds: c ? [c] : [] })} aria-pressed={on} className={`${chip(on)} h-9 min-w-0 truncate !px-1 !text-[12px] whitespace-nowrap`}>
               {label}
             </button>
           );
@@ -454,17 +455,24 @@ export function MobileSort() {
 function CategoryTiles({ dense = false }: { dense?: boolean }) {
   const { f, update, catCounts } = useFilters();
   const all = Object.values(catCounts).reduce((a, b) => a + b, 0);
+  const [open, setOpen] = useState(false);
   const items = [{ id: undefined, name: "Tout", icon: null, n: all }, ...CATEGORIES.map((c) => ({ id: c.id, name: c.name, icon: c.icon, n: catCounts[c.id] ?? 0 }))];
+  // Phones show one row; keep the selected category in it.
+  const sel = items.findIndex((c) => c.id === f.cat);
+  if (!dense && sel >= 4) items.splice(3, 0, items.splice(sel, 1)[0]);
+  const collapse = !dense;
   return (
+    <>
     <div className={`grid grid-cols-4 gap-2 ${dense ? "" : "sm:grid-cols-6 xl:grid-cols-12"}`}>
-      {items.map((c) => {
+      {items.map((c, i) => {
         const on = f.cat === c.id;
+        const hidden = collapse && i >= 4;
         return (
           <button
             key={c.id ?? "all"}
             onClick={() => update({ cat: on && c.id ? undefined : c.id, makers: [] })}
             aria-pressed={on}
-            className={`tap relative flex h-[78px] min-w-0 flex-col items-center justify-center gap-1 rounded-2xl border-[1.5px] px-1 ${on ? "border-ink bg-ink text-white" : "border-line bg-card hover:border-pri"} ${c.n === 0 && !on ? "opacity-45" : ""}`}
+            className={`tap relative flex h-[78px] min-w-0 flex-col items-center justify-center gap-1 rounded-2xl border-[1.5px] px-1 ${on ? "border-ink bg-ink text-white" : "border-line bg-card hover:border-pri"} ${c.n === 0 && !on ? "opacity-45" : ""} ${hidden ? (open ? "enter" : "max-sm:hidden") : ""}`}
           >
             <span className={`flex size-9 items-center justify-center rounded-full transition-colors ${on ? "bg-pri text-white" : "bg-pri-soft text-pri-ink"}`}>
               {c.icon ? <PartIcon icon={c.icon} size={22} strokeWidth={2.4} color={on ? "#fff" : "var(--color-pri-ink)"} /> : <GridIcon size={18} />}
@@ -475,6 +483,8 @@ function CategoryTiles({ dense = false }: { dense?: boolean }) {
         );
       })}
     </div>
+    {collapse && <MoreButton open={open} total={items.length - 1} onToggle={() => setOpen(!open)} label="catégories" />}
+    </>
   );
 }
 

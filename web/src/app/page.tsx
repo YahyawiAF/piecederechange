@@ -3,6 +3,7 @@ import { BRANDS, TYPES } from "@/lib/moto";
 import { CATEGORIES, PART_ICONS, dt, plural } from "@/lib/catalog";
 import { getAllParts, getDeals, getShops, getSpotlights } from "@/lib/data";
 import { AdSpotlight } from "@/components/ads";
+import { MobileMore } from "@/components/mobile-more";
 import { WRAP } from "@/lib/ui";
 import { MotoIcon, PartIcon, ChevronRight, ScanIcon, StarIcon } from "@/components/icons";
 import { PromoCarousel } from "@/components/home/promo-carousel";
@@ -32,16 +33,18 @@ export default async function HomePage() {
     <main className="flex flex-col gap-7 pt-4 md:gap-14 md:pt-6">
       <section className={WRAP}>
         <SectionTitle title="Pièces par catégorie" href="/catalogue" link="Tout le catalogue" />
-        <div className="grid grid-cols-4 gap-2 md:grid-cols-[repeat(auto-fit,minmax(112px,1fr))] md:gap-3">
-          {CATEGORIES.map((c) => (
-            <Link key={c.id} href={`/catalogue?cat=${c.id}`} className="tap lift flex h-[86px] flex-col items-center justify-center gap-1.5 rounded-[14px] border border-line bg-card md:h-auto md:gap-2.5 md:rounded-[18px] md:px-3 md:pt-5 md:pb-4">
+        <MobileMore
+          label="catégories"
+          className="grid grid-cols-4 gap-2 md:grid-cols-[repeat(auto-fit,minmax(112px,1fr))] md:gap-3"
+          items={CATEGORIES.map((c) => (
+            <Link key={c.id} href={`/catalogue?cat=${c.id}`} className="tap lift flex h-[86px] w-full flex-col items-center justify-center gap-1.5 rounded-[14px] border border-line bg-card md:h-auto md:gap-2.5 md:rounded-[18px] md:px-3 md:pt-5 md:pb-4">
               <span className="flex size-[42px] items-center justify-center rounded-full bg-pri-soft md:size-16">
                 <PartIcon icon={c.icon} color="var(--color-pri-ink)" strokeWidth={2.2} className="size-[26px] md:size-[38px]" />
               </span>
               <span className="text-xs font-semibold md:text-sm">{c.name}</span>
             </Link>
           ))}
-        </div>
+        />
       </section>
 
       <div className={`${WRAP} flex flex-col gap-4 md:hidden`}>
