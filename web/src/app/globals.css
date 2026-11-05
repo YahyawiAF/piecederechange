@@ -181,6 +181,15 @@ a.bg-ink {
   display: none;
 }
 
+/* iOS Safari zooms into any field under 16px when it gets focus. Keep fields at 16px on phones. */
+@media (max-width: 767px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
