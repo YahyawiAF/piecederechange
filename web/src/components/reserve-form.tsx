@@ -5,9 +5,9 @@ import { reserve, type ReserveState } from "@/app/reservation/actions";
 import { dt } from "@/lib/catalog";
 import type { PartIconId } from "@/lib/types";
 import { useGarage } from "./garage-provider";
-import { ArrowRight, InfoIcon, PartIcon, WrenchIcon } from "./icons";
+import { ArrowRight, InfoIcon, PartIcon, StarIcon, WrenchIcon } from "./icons";
 
-type Props = { partId: string; name: string; price: number; icon: PartIconId; shopName: string; shopAddress: string | null; stock: number };
+type Props = { pointsPerDt: number; partId: string; name: string; price: number; icon: PartIconId; shopName: string; shopAddress: string | null; stock: number };
 
 const input = "h-12 w-full rounded-xl border-[1.5px] border-line bg-card px-3.5 text-[15px] outline-none transition-[border-color,box-shadow] placeholder:text-[#9A9EA6] focus:border-pri focus:shadow-[0_0_0_3px_rgb(214_63_11/0.18)] aria-[invalid=true]:border-sale";
 
@@ -134,6 +134,12 @@ export function ReserveForm(p: Props) {
         <div className="flex items-baseline justify-between">
           <span className="font-bold">Total pièces</span>
           <span className="disp text-3xl text-pri-ink">{dt(qty * p.price)}</span>
+        </div>
+        <div className="flex items-center justify-between rounded-xl bg-[#FBF1D6] px-3 py-2 text-[13px] font-semibold text-[#6B4E0E]">
+          <span className="flex items-center gap-1.5">
+            <StarIcon size={14} /> Points fidélité gagnés
+          </span>
+          <span className="disp text-lg">+{Math.floor(qty * p.price * p.pointsPerDt).toLocaleString("fr-FR")}</span>
         </div>
         <p className="flex gap-2 text-[12.5px] leading-normal text-mut">
           <InfoIcon size={16} className="mt-px shrink-0" />

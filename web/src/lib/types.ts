@@ -105,3 +105,33 @@ export type ReservationInput = {
 };
 
 export type ReservationResult = { code: string; total: number };
+
+export type NotificationKind = "order" | "promo" | "loyalty" | "stock";
+
+export type AppNotification = {
+  id: string;
+  kind: NotificationKind;
+  title: string;
+  body: string;
+  /** ISO date-time. */
+  at: string;
+  href: string;
+};
+
+export type LoyaltyEvent = { id: string; at: string; label: string; points: number };
+
+export type Customer = {
+  firstName: string;
+  lastName: string;
+  phone: string;
+  email: string;
+  city: string;
+  address: string;
+  memberSince: string;
+  cardNumber: string;
+  /** Current points balance. */
+  points: number;
+  /** Points earned over the last 12 months (decides the tier). */
+  earned12m: number;
+  history: LoyaltyEvent[];
+};

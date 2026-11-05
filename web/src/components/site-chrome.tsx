@@ -1,8 +1,10 @@
 import Link from "next/link";
 import Form from "next/form";
-import { getAllParts } from "@/lib/data";
+import { getAllParts, getCustomer, getNotifications } from "@/lib/data";
+import { tierFor } from "@/lib/loyalty";
+import { NotificationBell } from "./notifications";
 import { MegaMenu } from "./mega-menu";
-import { BellIcon, PinIcon, ScanIcon, SearchIcon } from "./icons";
+import { PinIcon, ScanIcon, SearchIcon } from "./icons";
 import { MyBikeLink } from "./my-bike-link";
 
 function Logo({ small = false }: { small?: boolean }) {
@@ -35,6 +37,8 @@ function SearchBox() {
 }
 
 export async function SiteHeader() {
+  const [notifications, customer] = await Promise.all([getNotifications(), getCustomer()]);
+  const tier = tierFor(customer.earned12m);
   const counts = (await getAllParts()).reduce<Record<string, number>>((acc, p) => {
     acc[p.category] = (acc[p.category] ?? 0) + 1;
     return acc;
@@ -58,10 +62,7 @@ export async function SiteHeader() {
                 <PinIcon size={16} className="text-pri" />
                 Ariana
               </button>
-              <button className="tap relative flex size-11 items-center justify-center" aria-label="Notifications">
-                <BellIcon />
-                <span className="absolute top-2.5 right-[11px] size-2 rounded-full bg-pri ring-2 ring-card" />
-              </button>
+              <NotificationBell items={notifications} />
             </div>
           </div>
           <div className="flex w-full gap-2 md:w-auto md:flex-[1_1_380px]">
@@ -75,8 +76,18 @@ export async function SiteHeader() {
             <Link href="/commandes" className="text-ink2 transition-colors hover:text-pri-ink">
               Commandes
             </Link>
-            <Link href="/magasin" className="tap flex h-10 items-center rounded-xl border-[1.5px] border-line px-4 hover:border-line2">
-              Espace magasin
+            <NotificationBell items={notifications} />
+            <Link href="/compte" className="tap flex h-11 items-center gap-2 rounded-full border-[1.5px] border-line py-1 pr-3.5 pl-1 hover:border-line2">
+              <span className="disp flex size-8 items-center justify-center rounded-full text-[13px] shadow-[inset_0_1px_0_rgb(255_255_255/0.4)]" style={{ background: tier.card, color: tier.text }}>
+                {customer.firstName[0]}
+                {customer.lastName[0]}
+              </span>
+              <span className="leading-tight">
+                <span className="block text-[13px]">Mon compte</span>
+                <span className="block text-[11px] font-semibold" style={{ color: tier.ink }}>
+                  {tier.name} · {customer.points.toLocaleString("fr-FR")} pts
+                </span>
+              </span>
             </Link>
           </nav>
         </div>
@@ -110,7 +121,7 @@ export function SiteFooter() {
           <span className="leading-normal">Pièces de rechange moto, du 50 cm³ à la grosse cylindrée, partout en Tunisie.</span>
         </div>
         {[
-          ["Acheter", [["Catalogue", "/catalogue"], ["Choisir ma moto", "/garage"], ["Mes commandes", "/commandes"]]],
+          ["Acheter", [["Catalogue", "/catalogue"], ["Mon compte & fidélité", "/compte"], ["Mes commandes", "/commandes"]]],
           ["Magasins", [["Espace magasin", "/magasin"], ["Devenir vendeur", "/magasin"]]],
           ["Aide", [["Retours & garantie", "/"], ["Nous contacter", "/"]]],
         ].map(([title, links]) => (

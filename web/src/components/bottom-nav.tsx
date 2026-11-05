@@ -9,7 +9,7 @@ const ITEMS = [
   { href: "/catalogue", label: "Catalogue", Icon: GridIcon, match: (p: string) => p.startsWith("/catalogue") || p.startsWith("/pieces") },
   null,
   { href: "/commandes", label: "Commandes", Icon: BagIcon, match: (p: string) => p.startsWith("/commandes") || p.startsWith("/reservation") },
-  { href: "/magasin", label: "Profil", Icon: UserIcon, match: (p: string) => p.startsWith("/magasin") || p.startsWith("/garage") },
+  { href: "/compte", label: "Profil", Icon: UserIcon, match: (p: string) => p.startsWith("/compte") || p.startsWith("/garage") },
 ];
 
 export function BottomNavView({ pathname }: { pathname: string | null }) {

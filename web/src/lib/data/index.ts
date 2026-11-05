@@ -4,6 +4,7 @@ import { applyFilters, matchBase } from "../filters";
 import type { CatalogFilters, Part, ReservationInput } from "../types";
 import { erpProvider, isErpConfigured } from "./erp";
 import { mockProvider } from "./mock";
+import { CUSTOMER, NOTIFICATIONS } from "./mock-data";
 
 const provider = () => (isErpConfigured() ? erpProvider : mockProvider);
 
@@ -64,4 +65,13 @@ export async function getDeals() {
 
 export async function createReservation(input: ReservationInput) {
   return provider().reserve(input);
+}
+
+// Client account, loyalty and notifications: demo data until the ERP exposes customer endpoints.
+export async function getCustomer() {
+  return CUSTOMER;
+}
+
+export async function getNotifications() {
+  return [...NOTIFICATIONS].sort((a, b) => b.at.localeCompare(a.at));
 }

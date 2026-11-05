@@ -2,10 +2,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { categoryById, dt } from "@/lib/catalog";
-import { getAllParts, getPart } from "@/lib/data";
+import { getAllParts, getCustomer, getPart } from "@/lib/data";
+import { pointsFor, tierFor } from "@/lib/loyalty";
 import { fitsModel, fittingModels } from "@/lib/compat";
 import { WRAP } from "@/lib/ui";
-import { ChatIcon, ChevronLeft, PartIcon, PhoneIcon, PlusIcon, RouteIcon } from "@/components/icons";
+import { ChatIcon, ChevronLeft, PartIcon, PhoneIcon, PlusIcon, RouteIcon, StarIcon } from "@/components/icons";
 import { CondBadge, PromoTag, StockLabel } from "@/components/parts";
 import { CompatBanner, FavButton, ProductTabs } from "@/components/product/product-client";
 import { CompatOverview } from "@/components/compat";
@@ -24,6 +25,7 @@ async function Part({ params }: { params: PageProps<"/pieces/[id]">["params"] })
   const { id } = await params;
   const part = await getPart(id);
   if (!part) notFound();
+  const tier = tierFor((await getCustomer()).earned12m);
   const all = await getAllParts();
   const together = part.universal
     ? all.filter((p) => p.universal && p.id !== part.id && p.category !== part.category).slice(0, 3)
@@ -84,6 +86,9 @@ async function Part({ params }: { params: PageProps<"/pieces/[id]">["params"] })
                 {part.oldPrice ? <span className="font-sans text-base font-medium text-mut not-italic line-through">{dt(part.oldPrice)}</span> : null}
               </div>
               <div className="mt-1 text-xs text-mut">TTC · {part.shop.name}</div>
+              <div className="mt-1.5 inline-flex items-center gap-1 rounded-full bg-[#FBF1D6] px-2.5 py-1 text-[12px] font-bold text-[#8A6514]">
+                <StarIcon size={12} /> +{pointsFor(part.price, tier).toLocaleString("fr-FR")} points fidélité
+              </div>
             </div>
             <div className="text-right">
               <StockLabel stock={part.stock} />

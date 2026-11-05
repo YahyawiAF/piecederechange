@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { getPart } from "@/lib/data";
+import { getCustomer, getPart } from "@/lib/data";
+import { tierFor } from "@/lib/loyalty";
 import { WRAP } from "@/lib/ui";
 import { ChevronLeft } from "@/components/icons";
 import { ReserveForm } from "@/components/reserve-form";
@@ -31,7 +32,7 @@ async function Reservation({ params }: { params: PageProps<"/reservation/[id]">[
         </Link>
         <h1 className="disp text-[26px] md:text-4xl">Réservation</h1>
       </div>
-      <ReserveForm partId={part.id} name={part.name} price={part.price} icon={part.icon} shopName={part.shop.name} shopAddress={part.shop.address} stock={part.stock} />
+      <ReserveForm pointsPerDt={tierFor((await getCustomer()).earned12m).multiplier} partId={part.id} name={part.name} price={part.price} icon={part.icon} shopName={part.shop.name} shopAddress={part.shop.address} stock={part.stock} />
     </>
   );
 }

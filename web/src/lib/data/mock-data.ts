@@ -1,6 +1,6 @@
 // Demo catalogue used when no ERP is configured (ERP_ORG_ID empty).
 // Prices, references and compatibilities are sample content.
-import type { CategoryId, Condition, Order, Part, PartIconId, Shop } from "../types";
+import type { AppNotification, CategoryId, Condition, Customer, Order, Part, PartIconId, Shop } from "../types";
 
 export const SHOPS: Shop[] = [
   { id: "mp", ini: "MP", name: "Moto Pièces Express", city: "Ariana", km: "1,8 km", rating: "4,9", reviews: 88, hours: "jusqu'à 19:00", tag: "Japonaises · roadsters & sportives", phone: "+216 70 000 001", whatsapp: "+21670000001", address: "Av. Habib Bourguiba, Ariana", delivery: "Retrait 1 h" },
@@ -160,4 +160,35 @@ export const ORDERS: Order[] = [
     events: [{ status: "reserved", at: "2026-09-27T14:30:00+01:00" }, { status: "cancelled", at: "2026-09-27T16:00:00+01:00" }],
     note: "Annulée par vous. Rien n'a été facturé.",
   },
+];
+
+// Demo client account, loyalty and notifications (the storefront API has no customer endpoints yet).
+export const CUSTOMER: Customer = {
+  firstName: "Ahmed",
+  lastName: "Trabelsi",
+  phone: "+216 22 123 456",
+  email: "ahmed.t@exemple.tn",
+  city: "Ariana",
+  address: "Cité Ennasr 2, Ariana",
+  memberSince: "2025-03-14",
+  cardNumber: "7810 4420 0815 2261",
+  points: 2140,
+  earned12m: 3360,
+  history: [
+    { id: "h1", at: "2026-11-04T10:12:00+01:00", label: "Réservation RES-2026-104 (en attente)", points: 0 },
+    { id: "h2", at: "2026-10-22T11:05:00+01:00", label: "Commande RES-2026-072 récupérée", points: 891 },
+    { id: "h3", at: "2026-10-23T09:00:00+01:00", label: "Avis sur le kit chaîne DID 525", points: 50 },
+    { id: "h4", at: "2026-10-09T15:40:00+01:00", label: "Commande RES-2026-063 livrée", points: 562 },
+    { id: "h5", at: "2026-09-30T12:00:00+01:00", label: "Bon d'achat 10 DT utilisé", points: -1000 },
+    { id: "h6", at: "2026-09-02T18:20:00+01:00", label: "Parrainage : Youssef a commandé", points: 300 },
+  ],
+};
+
+export const NOTIFICATIONS: AppNotification[] = [
+  { id: "n1", kind: "order", title: "Commande prête au retrait", body: "RES-2026-081 · Plaquettes EBC × 2 vous attendent chez Moto Pièces Express jusqu'au 6 nov.", at: "2026-11-04T08:45:00+01:00", href: "/commandes" },
+  { id: "n2", kind: "order", title: "Votre colis est en préparation", body: "RES-2026-094 · Livraison prévue aujourd'hui entre 14 h et 18 h.", at: "2026-11-04T09:05:00+01:00", href: "/commandes" },
+  { id: "n3", kind: "loyalty", title: "Vous êtes membre Or", body: "+50 % de points et montage -20 %. Plus que 3 640 points pour Platine.", at: "2026-10-22T11:06:00+01:00", href: "/compte" },
+  { id: "n4", kind: "promo", title: "Saison freinage : -20 % pour votre Z1000", body: "Plaquettes et disques Brembo, EBC, Galfer compatibles avec votre moto.", at: "2026-11-03T18:00:00+01:00", href: "/catalogue?cat=freinage&type=Roadster&brand=kawasaki&model=z1000" },
+  { id: "n5", kind: "stock", title: "De retour en stock", body: "Plaquettes avant Kawasaki origine 43082-0122, 1 jeu disponible à Ariana.", at: "2026-11-02T10:30:00+01:00", href: "/catalogue?q=43082-0122" },
+  { id: "n6", kind: "loyalty", title: "+891 points crédités", body: "Merci pour votre commande RES-2026-072. Solde : 2 140 points.", at: "2026-10-22T11:05:00+01:00", href: "/compte" },
 ];
